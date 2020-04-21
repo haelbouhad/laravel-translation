@@ -138,6 +138,28 @@ class File extends Translation implements DriverInterface
 
         $this->saveGroupTranslations($language, $group, $translations->get($group));
     }
+    
+    public function addGroupTranslationArr($language, $group, $keys, $value = [])
+    {
+        if (! $this->languageExists($language)) {
+            $this->addLanguage($language);
+        }
+
+        $translations = $this->getGroupTranslationsFor($language);
+
+        // does the group exist? If not, create it.
+        if (! $translations->keys()->contains($group)) {
+            $translations->put($group, collect());
+        }
+
+        $values = $translations->get($group);
+        foreach ($keys as $index => $key) {
+            $values[$key] = $value[$index];
+        }
+        $translations->put($group, collect($values));
+
+        $this->saveGroupTranslations($language, $group, $translations->get($group));
+    }
 
     /**
      * Add a new single type translation.
